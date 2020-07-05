@@ -1,0 +1,61 @@
+<modification>
+    <id>YouPay</id>
+    <version>1.0</version>
+    <author>MyWork Australia - Bjorn Mett</author>
+     <file name="catalog/controller/checkout/success.php">
+        <operation>
+            <search position="before"><![CDATA[if (isset($this->session->data['order_id'])) {]]></search>
+            <add><![CDATA[
+                $this->data['youpay_link'] = $this->session->data['youpay_link'];
+                $this->data['youpay_order_id'] = $this->session->data['youpay_order_id'];
+                unset($this->session->data['youpay_link']);
+                unset($this->session->data['youpay_order_id']);
+                ]]></add>
+        </operation>
+    </file>
+    <file name="catalog/model/checkout/order.php">
+        <operation>
+            <search position="after"><![CDATA[$template = new Template();]]></search>
+            <add><![CDATA[
+            	if(isset($this->session->data['youpay_link'])){
+	                $template->data['youpay_link'] = $this->session->data['youpay_link'];
+	                $template->data['youpay_order_id'] = $this->session->data['youpay_order_id'];
+	            }	
+                ]]></add>
+        </operation>
+    </file>
+    <file name="catalog/view/theme/default/template/common/success.tpl">
+        <operation>
+        	<search position="before"><![CDATA[<?php echo $text_message; ?>]]></search>
+        	<add><![CDATA[
+        		<?php if(isset($this->session->data['youpay_link'])){ ?>
+                	<p>Your order is now on hold until payment is received. Make sure to share your YouPay link with the person you want to pay for the order.</p>
+            	<?php } ?>
+                ]]></add>
+        </operation>
+        <operation>
+            <search position="before"><![CDATA[<div class="buttons">]]></search>
+            <add><![CDATA[
+                <?php if(isset($youpay_order_id)){ ?>
+                <div>
+                    <div id="youpay-share-app" data-id="<?php echo($youpay_order_id);?>""></div>
+                </div>
+                <script src="https://youpay.link/checkout.js"></script>
+                <?php } ?>
+                ]]></add>
+        </operation>
+    </file>
+    <file name="catalog/view/theme/default/template/mail/order.tpl">
+        <operation>
+            <search position="before"><![CDATA[<p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_greeting; ?></p>]]></search>
+            <add><![CDATA[
+            	<?php if(isset($youpay_link)){ ?>
+					<p style="margin-top: 0px; margin-bottom: 20px;">
+					 Your order is now on hold until payment is received. Make sure to share your YouPay link with the person you want to pay for the order:<br/>
+					 <a href="https://youpay.link/<?php echo $youpay_link;?>">https://youpay.link/<?php echo $youpay_link;?></a>
+					</p>
+				<?php } ?>
+                ]]></add>
+        </operation>
+    </file>  
+</modification>
