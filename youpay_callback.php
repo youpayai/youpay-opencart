@@ -1,6 +1,5 @@
 <?php
 /**
- * Author: qphoria@gmail.com
  * Usage: Update the $path to your callback script and set it to receive $_GET or $_REQUEST params
  *
  * This is a redirect script used when callbacks from API integrations don't allow query data back in the url
@@ -10,7 +9,7 @@
 */
 $host  = $_SERVER['HTTP_HOST'];
 $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-$path  = 'index.php?route=payment/youpay/callback';
+$path  = 'index.php?route=/extension/payment/youpay/callback';
 $query = "";
 
 if (isset($_REQUEST) && $_REQUEST) {

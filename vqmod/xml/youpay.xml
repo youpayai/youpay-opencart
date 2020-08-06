@@ -6,56 +6,77 @@
         <operation>
             <search position="before"><![CDATA[if (isset($this->session->data['order_id'])) {]]></search>
             <add><![CDATA[
-                $this->data['youpay_link'] = $this->session->data['youpay_link'];
-                $this->data['youpay_order_id'] = $this->session->data['youpay_order_id'];
+                $data['youpay_link'] = $this->session->data['youpay_link'];
+                $data['youpay_order_id'] = $this->session->data['youpay_order_id'];
                 unset($this->session->data['youpay_link']);
                 unset($this->session->data['youpay_order_id']);
                 ]]></add>
         </operation>
     </file>
-    <file name="catalog/model/checkout/order.php">
-        <operation>
-            <search position="after"><![CDATA[$template = new Template();]]></search>
-            <add><![CDATA[
-            	if(isset($this->session->data['youpay_link'])){
-	                $template->data['youpay_link'] = $this->session->data['youpay_link'];
-	                $template->data['youpay_order_id'] = $this->session->data['youpay_order_id'];
-	            }	
-                ]]></add>
-        </operation>
-    </file>
-    <file name="catalog/view/theme/default/template/common/success.tpl">
-        <operation>
-        	<search position="before"><![CDATA[<?php echo $text_message; ?>]]></search>
-        	<add><![CDATA[
-        		<?php if(isset($this->session->data['youpay_link'])){ ?>
-                	<p>Your order is now on hold until payment is received. Make sure to share your YouPay link with the person you want to pay for the order.</p>
-            	<?php } ?>
-                ]]></add>
-        </operation>
+    <file name="catalog/view/theme/default/template/common/success.twig">
         <operation>
             <search position="before"><![CDATA[<div class="buttons">]]></search>
             <add><![CDATA[
-                <?php if(isset($youpay_order_id)){ ?>
-                <div>
-                    <div id="youpay-share-app" data-id="<?php echo($youpay_order_id);?>""></div>
+                {% if youpay_order_id %}
+                <div style="max-width: 600px;">
+                    <div id="youpay-share-app" data-id="{{ youpay_order_id }}"></div>
                 </div>
                 <script src="https://youpay.link/checkout.js"></script>
-                <?php } ?>
+                {% endif %}
                 ]]></add>
         </operation>
     </file>
-    <file name="catalog/view/theme/default/template/mail/order.tpl">
+
+    <file name="catalog/language/en-gb/mail/order_add.php">
         <operation>
-            <search position="before"><![CDATA[<p style="margin-top: 0px; margin-bottom: 20px;"><?php echo $text_greeting; ?></p>]]></search>
+            <search position="after" offset="1"><![CDATA[$_['text_footer'] ]]></search>
             <add><![CDATA[
-            	<?php if(isset($youpay_link)){ ?>
-					<p style="margin-top: 0px; margin-bottom: 20px;">
-					 Your order is now on hold until payment is received. Make sure to share your YouPay link with the person you want to pay for the order:<br/>
-					 <a href="https://youpay.link/<?php echo $youpay_link;?>">https://youpay.link/<?php echo $youpay_link;?></a>
-					</p>
-				<?php } ?>
+                $_['text_youpay'] = "YouPay link:"; 
                 ]]></add>
         </operation>
-    </file>  
+    </file>
+
+    <file name="catalog/controller/mail/order.php">
+        <operation>
+            <search position="after"><![CDATA[$data['ip'] = $order_info['ip'];]]></search>
+            <add><![CDATA[
+                 $data['youpay_link'] = $this->session->data['youpay_link'];
+                ]]></add>
+        </operation>
+        <operation>
+            <search position="after"><![CDATA[$data['text_footer'] = $language->get('text_footer');]]></search>
+            <add><![CDATA[
+                 $data['text_youpay'] = $language->get('text_youpay');
+                ]]></add>
+        </operation>
+    </file>
+    <file name="catalog/view/theme/default/template/mail/order_add.twig">
+        <operation>
+            <search position="before" offset="1"><![CDATA[{% if download %}]]></search>
+            <add><![CDATA[
+                {% if youpay_link %}
+                  <p style="margin-top: 0px; margin-bottom: 20px;">{{ text_youpay }}</p>
+                  <p style="margin-top: 0px; margin-bottom: 20px;"><a href="https://youpay.link/{{ youpay_link }}">https://youpay.link/{{ youpay_link }}</a></p>
+                {% endif %}
+                ]]></add>
+        </operation>
+    </file>
+
+    <file name="catalog/model/catalog/product.php">
+        <operation>
+            <search position="before"><![CDATA[public function getProduct($product_id) {]]></search>
+            <add><![CDATA[
+        public function addProduct($data) {
+            $this->db->query("INSERT INTO " . DB_PREFIX . "product SET model = '" . $this->db->escape($data['model']) . "', sku = '" . $this->db->escape($data['sku']) . "', upc = '" . $this->db->escape($data['upc']) . "', ean = '" . $this->db->escape($data['ean']) . "', jan = '" . $this->db->escape($data['jan']) . "', isbn = '" . $this->db->escape($data['isbn']) . "', mpn = '" . $this->db->escape($data['mpn']) . "', location = '" . $this->db->escape($data['location']) . "', quantity = '" . (int)$data['quantity'] . "', minimum = '" . (int)$data['minimum'] . "', subtract = '" . (int)$data['subtract'] . "', stock_status_id = '" . (int)$data['stock_status_id'] . "', date_available = '" . $this->db->escape($data['date_available']) . "', manufacturer_id = '" . (int)$data['manufacturer_id'] . "', shipping = '" . (int)$data['shipping'] . "', price = '" . (float)$data['price'] . "', points = '" . (int)$data['points'] . "', weight = '" . (float)$data['weight'] . "', weight_class_id = '" . (int)$data['weight_class_id'] . "', length = '" . (float)$data['length'] . "', width = '" . (float)$data['width'] . "', height = '" . (float)$data['height'] . "', length_class_id = '" . (int)$data['length_class_id'] . "', status = '" . (int)$data['status'] . "', tax_class_id = '" . (int)$data['tax_class_id'] . "', sort_order = '" . (int)$data['sort_order'] . "', date_added = NOW(), date_modified = NOW()");
+
+            $product_id = $this->db->getLastId();
+            foreach ($data['product_description'] as $language_id => $value) {
+                $this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
+            }
+
+            return $product_id;
+        }
+        ]]></add>
+        </operation>
+    </file>
 </modification>
