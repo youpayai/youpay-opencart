@@ -2,26 +2,73 @@
     <id>YouPay</id>
     <version>1.0</version>
     <author>MyWork Australia - Bjorn Mett</author>
-     <file name="catalog/controller/checkout/success.php">
+    <!-- include youpay css -->
+    <file name="catalog/controller/common/header.php">
+        <operation>
+            <search position="after"><![CDATA[$data['title'] = $this->document->getTitle();]]></search>
+            <add><![CDATA[
+                $this->document->addStyle('catalog/view/theme/default/stylesheet/youpay.css');
+                ]]></add>
+        </operation>
+    </file>
+
+    <!-- product page -->
+    <file name="catalog/view/theme/default/template/product/product.twig">
+        <operation>
+            <search position="before"><![CDATA[<div id="product">]]></search>
+            <add><![CDATA[
+              	<div id="youpay-product-page-info">
+					<a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal"><img class="youpay-logo" src="/image/youpay-logo.png"></a>
+					Or <strong>$0</strong> and let someone else pay for you. <a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal">Learn More</a>.
+				</div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="youPayModal" tabindex="-1" role="dialog" aria-labelledby="youPayModalTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <img class="what-is-youpay" alt="What is YouPay?" src="/image/what-is-youpay.jpg">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                ]]></add>
+        </operation>
+    </file>
+
+    <!-- checkout -->
+    <file name="catalog/controller/checkout/success.php">
         <operation>
             <search position="before"><![CDATA[if (isset($this->session->data['order_id'])) {]]></search>
             <add><![CDATA[
-                $data['youpay_link'] = $this->session->data['youpay_link'];
-                $data['youpay_order_id'] = $this->session->data['youpay_order_id'];
-                unset($this->session->data['youpay_link']);
-                unset($this->session->data['youpay_order_id']);
+                if (isset($this->session->data['youpay_link'])) {
+                    $data['youpay_link'] = $this->session->data['youpay_link'];
+                    $data['youpay_order_id'] = $this->session->data['youpay_order_id'];
+                    unset($this->session->data['youpay_link']);
+                    unset($this->session->data['youpay_order_id']);
+                }
                 ]]></add>
         </operation>
     </file>
     <file name="catalog/view/theme/default/template/common/success.twig">
         <operation>
-            <search position="before"><![CDATA[<div class="buttons">]]></search>
+            <search position="replace" offset="4"><![CDATA[<h1>{{ heading_title }}</h1>]]></search>
             <add><![CDATA[
                 {% if youpay_order_id %}
-                <div style="max-width: 600px;">
-                    <div id="youpay-share-app" data-id="{{ youpay_order_id }}"></div>
-                </div>
-                <script src="https://youpay.link/checkout.js"></script>
+                    <div style="max-width: 375px;margin: 22px auto 18px;">
+                        <div id="youpay-share-app" data-id="{{ youpay_order_id }}"></div>
+                    </div>
+                    <script src="https://youpay.link/checkout.js"></script>
+                {% else %}
+                    {{ text_message }}
+                    <div class="buttons">
+                        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+                    </div>
                 {% endif %}
                 ]]></add>
         </operation>
@@ -31,7 +78,10 @@
         <operation>
             <search position="after" offset="1"><![CDATA[$_['text_footer'] ]]></search>
             <add><![CDATA[
-                $_['text_youpay'] = "YouPay link:"; 
+                $_['text_youpay'] = "YouPay Link";
+                $_['text_youpay_instructions'] = "<p>Your order is now on hold until payment has been received.<br/>
+Simply send the link below to the person you wish to pay.</p>";
+                $_['text_youpay_address'] = "Order on hold until paid via YouPay link:";
                 ]]></add>
         </operation>
     </file>
@@ -47,6 +97,8 @@
             <search position="after"><![CDATA[$data['text_footer'] = $language->get('text_footer');]]></search>
             <add><![CDATA[
                  $data['text_youpay'] = $language->get('text_youpay');
+                 $data['text_youpay_instructions'] = $language->get('text_youpay_instructions');
+                 $data['text_youpay_address'] = $language->get('text_youpay_address');
                 ]]></add>
         </operation>
     </file>
@@ -55,28 +107,30 @@
             <search position="before" offset="1"><![CDATA[{% if download %}]]></search>
             <add><![CDATA[
                 {% if youpay_link %}
-                  <p style="margin-top: 0px; margin-bottom: 20px;">{{ text_youpay }}</p>
-                  <p style="margin-top: 0px; margin-bottom: 20px;"><a href="https://youpay.link/{{ youpay_link }}">https://youpay.link/{{ youpay_link }}</a></p>
+                   <table style="border-collapse: collapse; width: 100%; border-top: 1px solid #DDDDDD; border-left: 1px solid #DDDDDD; margin-bottom: 20px;">
+                    <thead>
+                      <tr>
+                        <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; background-color: #EFEFEF; font-weight: bold; text-align: left; padding: 7px; color: #222222;">{{ text_youpay }}</td>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;">{{ text_youpay_instructions }}
+                        <a href="https://youpay.link/{{ youpay_link }}">https://youpay.link/{{ youpay_link }}</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 {% endif %}
+                ]]></add>
+        </operation>
+        <operation>
+            <search position="replace"><![CDATA[{{ payment_address }}]]></search>
+            <add><![CDATA[
+                {{ text_youpay_address }}<br/>
+                <a href="https://youpay.link/{{ youpay_link }}">https://youpay.link/{{ youpay_link }}</a>
                 ]]></add>
         </operation>
     </file>
 
-    <file name="catalog/model/catalog/product.php">
-        <operation>
-            <search position="before"><![CDATA[public function getProduct($product_id) {]]></search>
-            <add><![CDATA[
-        public function addProduct($data) {
-            $this->db->query("INSERT INTO " . DB_PREFIX . "product SET model = '" . $this->db->escape($data['model']) . "', sku = '" . $this->db->escape($data['sku']) . "', upc = '" . $this->db->escape($data['upc']) . "', ean = '" . $this->db->escape($data['ean']) . "', jan = '" . $this->db->escape($data['jan']) . "', isbn = '" . $this->db->escape($data['isbn']) . "', mpn = '" . $this->db->escape($data['mpn']) . "', location = '" . $this->db->escape($data['location']) . "', quantity = '" . (int)$data['quantity'] . "', minimum = '" . (int)$data['minimum'] . "', subtract = '" . (int)$data['subtract'] . "', stock_status_id = '" . (int)$data['stock_status_id'] . "', date_available = '" . $this->db->escape($data['date_available']) . "', manufacturer_id = '" . (int)$data['manufacturer_id'] . "', shipping = '" . (int)$data['shipping'] . "', price = '" . (float)$data['price'] . "', points = '" . (int)$data['points'] . "', weight = '" . (float)$data['weight'] . "', weight_class_id = '" . (int)$data['weight_class_id'] . "', length = '" . (float)$data['length'] . "', width = '" . (float)$data['width'] . "', height = '" . (float)$data['height'] . "', length_class_id = '" . (int)$data['length_class_id'] . "', status = '" . (int)$data['status'] . "', tax_class_id = '" . (int)$data['tax_class_id'] . "', sort_order = '" . (int)$data['sort_order'] . "', date_added = NOW(), date_modified = NOW()");
-
-            $product_id = $this->db->getLastId();
-            foreach ($data['product_description'] as $language_id => $value) {
-                $this->db->query("INSERT INTO " . DB_PREFIX . "product_description SET product_id = '" . (int)$product_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', description = '" . $this->db->escape($value['description']) . "', tag = '" . $this->db->escape($value['tag']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
-            }
-
-            return $product_id;
-        }
-        ]]></add>
-        </operation>
-    </file>
 </modification>

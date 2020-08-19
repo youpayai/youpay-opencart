@@ -66,13 +66,6 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			$data['payment_youpay_password'] = $this->config->get('payment_youpay_password');
 		}
 
-		if (isset($this->request->post['payment_youpay_fees'])) {
-			$data['payment_youpay_fees'] = $this->request->post['payment_youpay_fees'];
-		} else {
-			$data['payment_youpay_fees'] = $this->config->get('payment_youpay_fees');
-		}
-
-
 		if (isset($this->request->post['payment_youpay_order_status_id'])) {
 			$data['payment_youpay_order_status_id'] = $this->request->post['payment_youpay_order_status_id'];
 		} else {

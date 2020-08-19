@@ -18,7 +18,6 @@ $_['entry_status']       	 = 'Status';
 $_['entry_sort_order']   	 = 'Sort Order';
 $_['entry_username']	 	 = 'Username';
 $_['entry_password']	 	 = 'Password';
-$_['entry_fees']	 		 = 'Extra Fees';
 
 // Help
 $_['help_total']         	 = 'The checkout total the order must reach before this payment method becomes active.';

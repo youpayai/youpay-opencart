@@ -3,6 +3,7 @@
 use YouPaySDK\OrderItem;
 use YouPaySDK\Order;
 use YouPaySDK\Client;
+use YouPaySDK\Receiver;
 
 class ControllerExtensionPaymentYoupay extends Controller {
 	public function index() {
@@ -66,27 +67,41 @@ class ControllerExtensionPaymentYoupay extends Controller {
 				);
 			}
 					
+			$order_data = $this->model_checkout_order->getOrder($order_id);
+			//build receiver
+			$youpay_receiver = 
+				array(
+					'name'		=> $order_data['firstname'] . " " . $order_data['lastname'],
+					'email'		=> $order_data['email'],
+					'phone'		=> $order_data['telephone'],
+					'address_1' => $order_data['shipping_address_1'],
+					'suburb'	=> $order_data['shipping_city'],
+					'state'		=> $order_data['shipping_zone'],
+					'postcode'  => $order_data['shipping_postcode'],
+					'country'   => $order_data['shipping_country']
+
+				
+			);
+
+			$shipping = $order_data['total'] - $this->cart->getSubTotal();
+							
+			$youpay_order = array(
+				'order_id'    => $order_id,
+				'receiver'	  => $youpay_receiver,
+				'title'       => $this->config->get('config_name'). " order #" . $order_id,
+				'order_items' => $order_items,
+				'extra_fees'  => $shipping,
+				'sub_total'   => $this->cart->getSubTotal(),
+				'total'       => (float)$order_data['total']
+			);
+
+
 			try {
-				$response = $this->client->createOrderFromArray(
-					//generate order array
-					$youpay_order = array(
-						'order_id'    => $order_id,
-						'title'       => 'Order #' . $order_id,
-						'order_items' => $order_items,
-						'extra_fees'  => $this->config->get('payment_youpay_fees'),
-						'sub_total'   => $this->cart->getSubTotal(),
-						'total'       => $this->cart->getTotal()
-					)
-				);
+				$response = $this->client->createOrderFromArray($youpay_order);
 
 			} catch (\Exception $exception) {
 				var_dump($exception->getMessage());
 			}
-
-			// echo '<pre>';
-			// print_r($response);
-			// echo '</pre>';
-			// die();
 
 			if($response->url){
 				$this->session->data['youpay_link'] = $response->url;
@@ -104,81 +119,75 @@ class ControllerExtensionPaymentYoupay extends Controller {
 	}
 
 	public function callback() {
-		if (isset($this->request->get['youpay_id'])) {
-			$order_id = (int)$this->request->get['youpay_id'];
+		if (isset($this->request->get['order_id'])) {
+			$order_id = (int)$this->request->get['order_id'];
+			$youpay_order_id = $this->request->get['youpay_id'];
 		} else {
 			echo "Order not found";
 			return;
 		}
 
+		require_once 'vendor/autoload.php';
 		$this->load->model('checkout/order');
 		$this->load->model('catalog/product');
-		$order_data = $this->model_checkout_order->getOrder($order_id);
-		$order_products = $this->model_checkout_order->getOrderProducts($order_id);
-		if($order_data){
-			
-			//create youpay product
-			$order_totals = $this->model_checkout_order->getOrderTotals($order_id);
 
-			$youpay_price = 0;
-			foreach ($order_totals as $order_total) {
-				if($order_total['code']=="total"){
-					$youpay_price = (float)$order_total['value'];
-				}
-			}
-			$youpay_product_description = array(
-				'1'		=> array(
-								'name'				=> 'YouPay',
-								'description'		=> 'YouPay',
-								'tag'				=> 'YouPay',
-								'meta_title'		=> 'YouPay',
-								'meta_description'	=> 'YouPay',
-								'meta_keyword'		=> 'YouPay',
-							)
-			);
-			$youpay_product_data = array(
-				'model'					=> 'youpay',
-				'sku'					=> '',
-				'upc'					=> '',
-				'ean'					=> '',
-				'jan'					=> '',
-				'isbn'					=> '',
-				'mpn'					=> '',
-				'location'				=> '',
-				'quantity'				=> 9999,
-				'minimum'				=> 1,
-				'subtract'				=> 0,
-				'stock_status_id'		=> 7,
-				'date_available'		=> '0000-00-00',
-				'date_available'		=> '0000-00-00',
-				'manufacturer_id'		=> 0,
-				'shipping'				=> 0,
-				'price'					=> $youpay_price,
-				'points'				=> 0,
-				'weight'				=> 1,
-				'weight_class_id'		=> 1,
-				'length'				=> 1,
-				'width' 				=> 1,
-				'height'				=> 1,
-				'length_class_id'		=> 1,
-				'status'				=> 1,
-				'tax_class_id'			=> 0,
-				'sort_order'			=> 1,
-				'product_description'	=> $youpay_product_description,
-				'product_store'			=> array(0)
-			);
+		$this->language->load('extension/payment/youpay');
 
-			$youpay_product_id = $this->model_catalog_product->addProduct($youpay_product_data);
-
-			$result = $this->cart->add($youpay_product_id);
-
-			//redirect to checkout
-			$this->response->redirect($this->url->link('checkout/checkout'));
-
-		}else{
-			echo "Order not found";
-			return;
+		if (empty($this->client)) {
+			$this->client = new Client();
 		}
 
+		$this->client->setToken($this->config->get('payment_youpay_token'));
+		$this->client->setStoreID($this->config->get('payment_youpay_store_id'));
+
+		$youpay_order = $this->client->getOrder($youpay_order_id);
+
+		if($youpay_order && $youpay_order->completed){
+
+			$order_data = $this->model_checkout_order->getOrder($order_id);
+			if($order_data){
+				$payment_status_text = $this->language->get('text_order_complete');
+				// $this->model_checkout_order->update($store_order_id, $this->config->get('youpay_order_status_id'), $payment_status_text, true);
+				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_youpay_order_status_id'), $payment_status_text, true, true);
+
+				$this->response->redirect($this->url->link('extension/payment/youpay/success', '', true));
+
+			}else{
+				echo "Order not found";
+				return;
+			}
+
+		}else{
+			echo "YouPay order not found or not completed";
+			return;
+		}
+	}
+
+	public function success(){
+		$this->language->load('extension/payment/youpay');
+
+
+		$this->document->setTitle($this->language->get('heading_title'));
+
+		$data['breadcrumbs'] = array();
+
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_home'),
+			'href' => $this->url->link('common/home')
+		);
+
+
+		$data['text_message'] = $this->language->get('text_payment_complete');
+
+		$data['continue'] = $this->url->link('common/home');
+
+		$data['column_left'] = $this->load->controller('common/column_left');
+		$data['column_right'] = $this->load->controller('common/column_right');
+		$data['content_top'] = $this->load->controller('common/content_top');
+		$data['content_bottom'] = $this->load->controller('common/content_bottom');
+		$data['footer'] = $this->load->controller('common/footer');
+		$data['header'] = $this->load->controller('common/header');
+
+		$this->response->setOutput($this->load->view('common/success', $data));
 	}
 }
