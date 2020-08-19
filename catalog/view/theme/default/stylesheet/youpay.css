@@ -1,0 +1,374 @@
+/* --- YouPay Styling -- */
+.youpay-info img.logo {
+    width: 100px;
+}
+
+#youpay-info-link {
+    cursor: pointer;
+}
+
+.youpay.buttons {
+    padding: 20px;
+    background-color: #f5f9ff;
+    border: 2px solid #335ba9 !important;
+    border-radius: 10px;
+    display: table !important;
+    width: 100% !important;
+}
+
+.youpay .youpay-inner-left {
+    display: table-cell !important;
+    border-radius: 10px;
+    height: 115px;
+    position: relative;
+    margin-bottom: -5px;
+}
+
+.youpay.buttons img.logo {
+    width: 170px;
+    padding: 15px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.youpay .youpay-inner-right {
+    float: right;
+    width: calc(100% - 230px);
+    position: relative;
+}
+
+.youpay h4 {
+	margin-bottom: 20px;
+	color: #294e96;
+	font-size: 23px;
+}
+
+.youpay p {
+    margin-bottom: 10px;
+    color: #1a1a1a;
+}
+
+.youpay p.last {
+    margin-bottom: 0px !important;
+}
+
+.youpay p i {
+    font-weight: 600;
+}
+
+.youpay p a {
+    border-bottom: 1px dotted #2a9d9d;
+    color: #2a9d9d;
+    font-weight: bold;
+}
+
+.youpay p a:hover {
+	text-decoration: none !important;
+	opacity: 0.8;
+}
+
+.youpay .youpay-link-container {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
+.youpay .youpay-link {
+    width: 100% !important;
+    max-width: 200px;
+    /*margin-left: 0;
+    margin-top: 13px;
+    margin-bottom: 10px;
+    background-color: #1a1a1a;
+    padding: 15px 20px;
+    border-radius: 100px;
+    font-size: 14px;*/
+    transition: 0.3s ease all;
+}
+
+.youpay .youpay-link:hover {
+	background: #66cdb6 !important;
+	color: #fff !important;
+}
+
+.youpay .youpay-link:hover, .youpay .youpay-link:focus, .youpay .youpay-link:active, .youpay .youpay-link:visited {
+    outline: none !important;
+    border: none !important;
+}
+
+.success-page h1 {
+    padding: 10px 10px 10px 30px;
+    background: #1E3160;
+    color: #fff;
+    width: auto;
+    display: block;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 30px
+}
+
+.success-page p {
+    text-align: center !important;
+    margin-bottom: 5px;
+}
+
+.success-page #content > div.buttons {
+    display: none;
+}
+
+.success-page #youpay-share-box {
+    margin-top: 30px;
+}
+
+.youpay-success {
+    text-align: center;
+    margin: 150px auto;
+}
+
+.youpay-success img {
+    max-width: 250px;
+    margin-bottom: 20px;
+}
+
+.youpay-success p {
+    font-size: 20px;
+}
+
+@media (max-width: 1150px) {
+    .left.youpay-link-container {
+        position: relative;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 980px) {
+    .youpay.buttons img.logo {
+        width: 210px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .youpay .youpay-inner-left,
+    .youpay .youpay-inner-right {
+        width: 100% !important;
+        float: none !important;
+        text-align: center !important;
+        display: block !important;
+        height: auto !important;
+    }
+
+    .youpay.buttons img {
+        margin: 0 auto !important;
+        text-align: center;
+        padding: 10px 0;
+    }
+
+    .youpay-inner-right .left {
+        float: none;
+    }
+
+    .youpay .youpay-link {
+        margin: 20px auto 0 !important;
+    }
+
+    .youpay.buttons img.logo {
+        position: relative;
+        padding-top: 0;
+    }
+
+    .youpay h4 {
+	    font-size: 20px;
+	}
+}
+
+/* PRODUCT INLINE MORE INFO */
+
+div#youpay-product-page-info {
+    background: #f3f4fd;
+    position: relative;
+    margin: 20px 0;
+    padding: 7px 12px;
+    box-shadow: inset -2px 2px 5px -5px #000;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #2d2d2d;
+	line-height: 1.3em;
+}
+
+div#youpay-product-page-info .youpay-logo {
+    max-width: 97px;
+    position: absolute;
+    top: -22px;
+    right: 0;
+}
+
+div#youpay-product-page-info a {
+    color: #2f3a93;
+    font-weight: 600;
+	cursor: pointer;
+}
+
+div#youpay-product-page-info a:hover {
+    text-decoration: underline;
+    color: #5e69ca;
+}
+
+@media(max-width: 500px){
+	div#youpay-product-page-info {
+		padding: 7px 10px;
+		font-size: 12px;
+	}
+}
+
+/* POPUP */
+
+#youPayModal .modal-dialog {
+    width: 100%;
+    max-width: 979px;
+}
+
+#youPayModal .modal-dialog img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+}
+
+#youPayModal .modal-header {
+    border: none;
+    min-height: inherit;
+    padding: 0;
+}
+
+#youPayModal .modal-header .close {
+    background: #000;
+    opacity: 1;
+    color: #FFF;
+    text-shadow: none;
+    margin: 0;
+    padding: 4px 9px 5px 10px;
+    position: absolute;
+    z-index: 2;
+    right: -38px;
+    top: -1px;
+    border-radius: 100%;
+    font-size: 24px;
+}
+
+#youPayModal .modal-header .close:hover{
+    background: #FFF;
+    color: #000;
+}
+
+@media(max-width: 979px){
+	#youPayModal .modal-dialog {
+		max-width: calc(100% - 20px);
+	}
+
+	#youPayModal .modal-header .close {
+		font-size: 16px;
+		padding: 2px 6px 3px;
+		top: -8px;
+		right: -8px;
+	}
+	
+	#youPayModal .modal-body {
+		padding: 7px;
+	}
+}
+
+/* CHECKOUT CREATE LINK */
+
+div#youpay-create-link-container {
+    background: #f3f4fd;
+    position: relative;
+    padding: 25px;
+    box-shadow: inset -2px 2px 5px -5px #000;
+    border-radius: 4px 30px 4px 4px;
+    max-width: 640px;
+    margin: 22px auto 18px;
+}
+
+.youpay-create-link-content p {
+    font-size: 14px;
+    line-height: 1.3em;
+}
+
+.youpay-create-link-logo {
+    background: #FFF;
+    text-align: center;
+    max-width: 219px;
+    padding: 17px 0 10px;
+    border-radius: 50px;
+    box-shadow: 0px 3px 4px #0000001c;
+    margin: -53px auto 23px;
+}
+
+.youpay-create-link-logo img {
+    max-width: 175px;
+    display: inline-block;
+}
+
+.youpay-create-link-content h3 {
+    color: #2f3a93;
+    font-weight: 600;
+    margin: 0 0 16px;
+    font-size: 22px;
+    text-align: center;
+}
+
+div#youpay-create-link-container #button-confirm {
+    display: block;
+    margin: 21px auto 0;
+    background: #0cd9dc;
+    border: none;
+    color: #FFF;
+    padding: 12px 16px;
+    font-size: 18px;
+    font-weight: 600;
+    border-radius: 4px;
+    box-shadow: -1px 1px 1px #00a0a2;
+}
+
+div#youpay-create-link-container #button-confirm:hover {
+    background: #00b9cc;
+}
+
+.youpay-create-link-content p a {
+    color: #2f3a93;
+    text-decoration: underline;
+}
+
+.youpay-create-link-content p a:hover {
+    color: #5e69ca;
+}
+
+@media(max-width: 767px){
+	.youpay-create-link-logo img {
+		max-width: 125px;
+	}
+
+	.youpay-create-link-logo {
+		max-width: 167px;
+		margin: -53px auto 18px;
+	}
+
+	div#youpay-create-link-container {
+		margin: 44px auto 0;
+		padding: 14px;
+	}
+
+	.youpay-create-link-content h3 {
+		font-size: 18px;
+	}
+
+	div#youpay-create-link-container #button-confirm {
+		font-size: 13px;
+		margin: 19px auto 0;
+	}
+
+	.youpay-create-link-content p {
+		font-size: 12px;
+	}
+}
