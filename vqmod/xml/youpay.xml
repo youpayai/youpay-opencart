@@ -37,14 +37,25 @@
     </file>
 
     <!-- product page -->
+    <file name="catalog/controller/product/product.php">
+        <operation>
+            <search position="before"><![CDATA[$data['products'] = array();]]></search>
+            <add><![CDATA[
+                $data['youpay_status'] = $this->config->get('youpay_status');
+                ]]></add>
+        </operation>
+    </file>
+
     <file name="catalog/view/theme/*/template/product/product.tpl">
         <operation>
             <search position="before"><![CDATA[<div id="product">]]></search>
             <add><![CDATA[
-              	<div id="youpay-product-page-info">
-					<a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal"><img class="youpay-logo" src="/image/youpay-logo.png"></a>
-					Or you pay <strong>$0</strong> and let someone else pay. <a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal">Learn More</a>.
-				</div>
+                <?php if($youpay_status){ ?>
+                  	<div id="youpay-product-page-info">
+    					<a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal"><img class="youpay-logo" src="/image/youpay-logo.png"></a>
+    					Or you pay <strong>$0</strong> and let someone else pay. <a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal">Learn More</a>.
+    				</div>
+                <?php } ?>
                 ]]></add>
         </operation>
     </file>
