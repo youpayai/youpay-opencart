@@ -1,5 +1,5 @@
 {
-    "name": "mywork/oc-youpay",
+    "name": "mywork/woo-youpay",
     "description": "YouPay",
     "minimum-stability": "stable",
     "license": "proprietary",
@@ -7,10 +7,6 @@
         {
             "name": "Jera Simpson",
             "email": "jera@mywork.com.au"
-        },
-        {
-            "name": "Bjorn Mett",
-            "email": "bjorn@mywork.com.au"
         }
     ],
     "repositories": [
@@ -27,9 +23,11 @@
         "symfony/var-dumper": "^5.0",
         "squizlabs/php_codesniffer": "3.*"
     },
-	"autoload": {
-		"psr-4": {
-			"YouPaySDK\\": "src"
-		}
-	}
+    "autoload": {
+        "psr-4": {
+            "OCYouPay\\": [
+                "/"
+            ]
+        }
+    }
 }
