@@ -17,6 +17,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 		
 		if ($this->session->data['payment_method']['code'] == 'youpay') {
 			$this->load->model('catalog/product');
+			$this->load->model('account/order');
 			$this->load->model('checkout/order');
 			$this->load->model('extension/payment/youpay');
 
@@ -28,14 +29,14 @@ class ControllerExtensionPaymentYoupay extends Controller {
 
 			//check if token and store_id are saved
 			if($this->model_extension_payment_youpay->getToken() && $this->model_extension_payment_youpay->getStoreID()){
-				$this->client->setToken($this->config->get('payment_youpay_token'));
-				$this->client->setStoreID($this->config->get('payment_youpay_store_id'));
+				$this->client->setToken($this->config->get('youpay_token'));
+				$this->client->setStoreID($this->config->get('youpay_store_id'));
 
 			}else{
 				//token and store_id are not saved, authenticate with youpay API
 				//authenticate client
-				$youpay_email = $this->config->get('payment_youpay_username');
-				$youpay_password = $this->config->get('payment_youpay_password');
+				$youpay_email = $this->config->get('youpay_username');
+				$youpay_password = $this->config->get('youpay_password');
 				$youpay_domain = $_SERVER['SERVER_NAME'];
 
 				$response = $this->client->auth($youpay_email, $youpay_password, $youpay_domain, 'opencart');
@@ -52,7 +53,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			$order_id = $this->session->data['order_id'];
 			//get order items
 			$order_items = array();
-			foreach ($this->model_checkout_order->getOrderProducts($order_id) as $order_product) {
+			foreach ($this->model_account_order->getOrderProducts($order_id) as $order_product) {
 				$product_data = $this->model_catalog_product->getProduct($order_product['product_id']);
 				$order_items[] = OrderItem::create(
 					array(
@@ -108,8 +109,11 @@ class ControllerExtensionPaymentYoupay extends Controller {
 				$this->session->data['youpay_order_id'] = $response->id;
 			}
 
-			$youpay_comment = "YouPay Link: https://youpay.link/".$response->url;
-			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_youpay_order_status_hold_id'), $youpay_comment);
+			//get YouPayJS
+			$this->session->data['youpay_js_url'] = $this->client->getCheckoutJSUrl();
+
+			$youpay_comment = "YouPay Link: ".$response->url;
+			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('youpay_order_status_hold_id'), $youpay_comment);
 		
 			$json['redirect'] = $this->url->link('checkout/success');
 		}
@@ -137,8 +141,8 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			$this->client = new Client();
 		}
 
-		$this->client->setToken($this->config->get('payment_youpay_token'));
-		$this->client->setStoreID($this->config->get('payment_youpay_store_id'));
+		$this->client->setToken($this->config->get('youpay_token'));
+		$this->client->setStoreID($this->config->get('youpay_store_id'));
 
 		$youpay_order = $this->client->getOrder($youpay_order_id);
 
@@ -148,7 +152,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			if($order_data){
 				$payment_status_text = $this->language->get('text_order_complete');
 				// $this->model_checkout_order->update($store_order_id, $this->config->get('youpay_order_status_id'), $payment_status_text, true);
-				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('payment_youpay_order_status_id'), $payment_status_text, true, true);
+				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('youpay_order_status_id'), $payment_status_text, true, true);
 
 				$this->response->redirect($this->url->link('extension/payment/youpay/success', '', true));
 
@@ -176,8 +180,14 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			'href' => $this->url->link('common/home')
 		);
 
+		$data['breadcrumbs'][] = array(
+			'text' => $this->language->get('text_success'),
+			'href' => $this->url->link('checkout/cart')
+		);
 
 		$data['text_message'] = $this->language->get('text_payment_complete');
+
+		$data['button_continue'] = $this->language->get('button_continue');
 
 		$data['continue'] = $this->url->link('common/home');
 
@@ -187,6 +197,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 		$data['content_bottom'] = $this->load->controller('common/content_bottom');
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
+
 
 		$this->response->setOutput($this->load->view('common/success', $data));
 	}

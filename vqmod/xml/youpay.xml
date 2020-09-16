@@ -12,17 +12,12 @@
         </operation>
     </file>
 
-    <!-- product page -->
-    <file name="catalog/view/theme/default/template/product/product.twig">
+    <!-- modal popup -->
+    <file name="catalog/view/theme/*/template/common/header.tpl">
         <operation>
-            <search position="before"><![CDATA[<div id="product">]]></search>
+            <search position="after"><![CDATA[<body]]></search>
             <add><![CDATA[
-              	<div id="youpay-product-page-info">
-					<a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal"><img class="youpay-logo" src="/image/youpay-logo.png"></a>
-					Or <strong>$0</strong> and let someone else pay for you. <a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal">Learn More</a>.
-				</div>
-
-                <!-- Modal -->
+                <!-- YouPay popup modal -->
                 <div class="modal fade" id="youPayModal" tabindex="-1" role="dialog" aria-labelledby="youPayModalTitle" aria-hidden="true">
                   <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -41,42 +36,56 @@
         </operation>
     </file>
 
+    <!-- product page -->
+    <file name="catalog/view/theme/*/template/product/product.tpl">
+        <operation>
+            <search position="before"><![CDATA[<div id="product">]]></search>
+            <add><![CDATA[
+              	<div id="youpay-product-page-info">
+					<a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal"><img class="youpay-logo" src="/image/youpay-logo.png"></a>
+					Or you pay <strong>$0</strong> and let someone else pay. <a class="youpay-info-link" data-toggle="modal" data-target="#youPayModal">Learn More</a>.
+				</div>
+                ]]></add>
+        </operation>
+    </file>
+
     <!-- checkout -->
     <file name="catalog/controller/checkout/success.php">
         <operation>
             <search position="before"><![CDATA[if (isset($this->session->data['order_id'])) {]]></search>
             <add><![CDATA[
                 if (isset($this->session->data['youpay_link'])) {
+                    $data['youpay_js_url'] = $this->session->data['youpay_js_url'];
                     $data['youpay_link'] = $this->session->data['youpay_link'];
                     $data['youpay_order_id'] = $this->session->data['youpay_order_id'];
-                    unset($this->session->data['youpay_link']);
-                    unset($this->session->data['youpay_order_id']);
+                   // unset($this->session->data['youpay_link']);
+                   // unset($this->session->data['youpay_order_id']);
                 }
                 ]]></add>
         </operation>
     </file>
-    <file name="catalog/view/theme/default/template/common/success.twig">
+    <file name="catalog/view/theme/*/template/common/success.tpl">
         <operation>
-            <search position="replace" offset="4"><![CDATA[<h1>{{ heading_title }}</h1>]]></search>
+            <search position="replace" offset="4"><![CDATA[<h1><?php echo $heading_title; ?></h1>]]></search>
             <add><![CDATA[
-                {% if youpay_order_id %}
+                <?php if(isset($youpay_order_id)){ ?>
                     <div style="max-width: 375px;margin: 22px auto 18px;">
-                        <div id="youpay-share-app" data-id="{{ youpay_order_id }}"></div>
+                        <div id="youpay-share-app" data-id="<?php echo $youpay_order_id; ?>"></div>
                     </div>
-                    <script src="https://youpay.link/checkout.js"></script>
-                {% else %}
-                    {{ text_message }}
+                    <script src="<?php echo $youpay_js_url; ?>"></script>
+                <?php } else { ?>
+                    <?php echo $text_message; ?>
                     <div class="buttons">
-                        <div class="pull-right"><a href="{{ continue }}" class="btn btn-primary">{{ button_continue }}</a></div>
+                        <div class="pull-right"><a href="<?php echo $continue; ?>" class="btn btn-primary"><?php echo $button_continue; ?></a></div>
                     </div>
-                {% endif %}
+                <?php } ?>
                 ]]></add>
         </operation>
     </file>
 
-    <file name="catalog/language/en-gb/mail/order_add.php">
+    <file name="catalog/language/en-gb/mail/order.php">
         <operation>
-            <search position="after" offset="1"><![CDATA[$_['text_footer'] ]]></search>
+            <search position="after" offset="1"><![CDATA[$_['text_new_footer'] ]]></search>
             <add><![CDATA[
                 $_['text_youpay'] = "YouPay Link";
                 $_['text_youpay_instructions'] = "<p>Your order is now on hold until payment has been received.<br/>
@@ -86,7 +95,7 @@ Simply send the link below to the person you wish to pay.</p>";
         </operation>
     </file>
 
-    <file name="catalog/controller/mail/order.php">
+    <file name="catalog/model/checkout/order.php">
         <operation>
             <search position="after"><![CDATA[$data['ip'] = $order_info['ip'];]]></search>
             <add><![CDATA[
@@ -94,7 +103,7 @@ Simply send the link below to the person you wish to pay.</p>";
                 ]]></add>
         </operation>
         <operation>
-            <search position="after"><![CDATA[$data['text_footer'] = $language->get('text_footer');]]></search>
+            <search position="after"><![CDATA[$data['text_footer'] = $language->get('text_new_footer');]]></search>
             <add><![CDATA[
                  $data['text_youpay'] = $language->get('text_youpay');
                  $data['text_youpay_instructions'] = $language->get('text_youpay_instructions');
@@ -102,33 +111,32 @@ Simply send the link below to the person you wish to pay.</p>";
                 ]]></add>
         </operation>
     </file>
-    <file name="catalog/view/theme/default/template/mail/order_add.twig">
+    <file name="catalog/view/theme/*/template/mail/order.tpl">
         <operation>
-            <search position="before" offset="1"><![CDATA[{% if download %}]]></search>
+            <search position="before" offset="1"><![CDATA[<?php if ($download) { ?>]]></search>
             <add><![CDATA[
-                {% if youpay_link %}
+                <?php if ($youpay_link) { ?>
                    <table style="border-collapse: collapse; width: 100%; border-top: 1px solid #DDDDDD; border-left: 1px solid #DDDDDD; margin-bottom: 20px;">
                     <thead>
                       <tr>
-                        <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; background-color: #EFEFEF; font-weight: bold; text-align: left; padding: 7px; color: #222222;">{{ text_youpay }}</td>
+                        <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; background-color: #EFEFEF; font-weight: bold; text-align: left; padding: 7px; color: #222222;"><?php echo $text_youpay; ?></td>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;">{{ text_youpay_instructions }}
-                        <a href="https://youpay.link/{{ youpay_link }}">https://youpay.link/{{ youpay_link }}</a>
+                        <td style="font-size: 12px; border-right: 1px solid #DDDDDD; border-bottom: 1px solid #DDDDDD; text-align: left; padding: 7px;"><?php echo $text_youpay_instructions; ?><br/><a href="<?php echo $youpay_link;?>"><?php echo $youpay_link; ?></a>
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                {% endif %}
+                <?php } ?>
                 ]]></add>
         </operation>
         <operation>
-            <search position="replace"><![CDATA[{{ payment_address }}]]></search>
+            <search position="replace"><![CDATA[<?php echo $payment_address; ?>]]></search>
             <add><![CDATA[
-                {{ text_youpay_address }}<br/>
-                <a href="https://youpay.link/{{ youpay_link }}">https://youpay.link/{{ youpay_link }}</a>
+                <?php echo $text_youpay_address; ?><br/>
+                <a href="<?php echo $youpay_link;?>"><?php echo $youpay_link; ?></a>
                 ]]></add>
         </operation>
     </file>
