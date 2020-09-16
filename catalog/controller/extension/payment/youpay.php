@@ -1,5 +1,4 @@
 <?php
-
 use YouPaySDK\OrderItem;
 use YouPaySDK\Order;
 use YouPaySDK\Client;
@@ -107,6 +106,9 @@ class ControllerExtensionPaymentYoupay extends Controller {
 				$this->session->data['youpay_link'] = $response->url;
 				$this->session->data['youpay_order_id'] = $response->id;
 			}
+
+			//get YouPayJS
+			$this->session->data['youpay_js_url'] = $this->client->getCheckoutJSUrl();
 
 			$youpay_comment = "YouPay Link: https://youpay.link/".$response->url;
 			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_youpay_order_status_hold_id'), $youpay_comment);
