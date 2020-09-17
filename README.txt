@@ -16,6 +16,10 @@ This is great for people who don't have credit cards, like teenagers, who often 
 
 Please see youpay.ai for more information.
 
+# Prerequisite
+1. Make sure you have signed up with YouPay at https://youpay.ai
+2. You need to have at least 1 payment method (PayPal, Stripe, etc) set up within your YouPay account before installing this extension.
+
 # Install Instructions
 1. Make sure you have vQmod install. You can get the newest version of vQmod here: https://github.com/vqmod/vqmod/releases
 2. Upload the contents of the 'upload' folder to the root directory of your OpenCart installation. No files should be overwritten.
