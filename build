@@ -2,7 +2,7 @@
 
 PROJECT="youpay-opencart-23x"
 ZIP="${PROJECT}.zip"
-TARGETDIR="${PROJECT}"
+TARGETDIR="upload"
 
 ######## Setup Functions #############
 # prints colored text
@@ -42,9 +42,13 @@ print_style ".\n" "info"
 print_style "Copying all files" "info"
 for file in *
 do
-  if [ "$file" != "$TARGETDIR" ] && [ "$file" != "vendor" ] && [ "$file" != "build" ] && [ "$file" != "$ZIP" ]
+  if [ "$file" != "$TARGETDIR" ] && [ "$file" != "vendor" ] && [ "$file" != "build" ] && [ "$file" != "$ZIP" ] && [ "$file" != "README.txt" ]
   then
     cp -r "$file" "$TARGETDIR/";
+    print_style "." "success"
+  elif [ "$file" == "README.txt" ]
+  then
+    cp -r "$file" ".";
     print_style "." "success"
   fi
 done
@@ -63,7 +67,7 @@ rm -rf composer.lock
 cd ../
 
 print_style "Zipping\n" "info"
-zip -r $ZIP $TARGETDIR &>/dev/null
+zip -r $ZIP $TARGETDIR README.txt &>/dev/null
 print_style "File Packaged Up Successfully\n" "success"
 
 print_style "...cleaning up" "info"
