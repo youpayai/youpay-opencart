@@ -1,5 +1,5 @@
 {
-    "name": "mywork/woo-youpay",
+    "name": "mywork/oc-youpay",
     "description": "YouPay",
     "minimum-stability": "stable",
     "license": "proprietary",
@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": ">=7.0",
-        "MyWorkAus/youpay-php-sdk": "dev-master"
+        "myworkaus/youpay-php-sdk": "dev-master"
     },
     "require-dev": {
         "symfony/var-dumper": "^5.0",
@@ -25,9 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "OCYouPay\\": [
-                "/"
-            ]
+            "OCYouPay\\": "./"
         }
     }
 }
