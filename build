@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECT="youpay-opencart-23x"
+PROJECT="youpay-opencart-21x"
 ZIP="${PROJECT}.zip"
 TARGETDIR="upload"
 
