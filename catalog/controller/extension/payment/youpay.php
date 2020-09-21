@@ -55,6 +55,12 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			$order_items = array();
 			foreach ($this->model_account_order->getOrderProducts($order_id) as $order_product) {
 				$product_data = $this->model_catalog_product->getProduct($order_product['product_id']);
+				//check for special
+				if($product_data['special']){
+					$price = $product_data['special'];
+				}else{
+					$price = $product_data['price'];
+				}
 				$order_items[] = OrderItem::create(
 					array(
 						'src'           => HTTPS_SERVER . 'image/' . $product_data['image'],
@@ -62,8 +68,8 @@ class ControllerExtensionPaymentYoupay extends Controller {
 						'order_item_id' => (int)$order_product['order_product_id'],
 						'title'         => $product_data['name'],
 						'quantity'      => (int)$order_product['quantity'],
-						'price'         => $product_data['price'],
-						'total'         => $this->tax->calculate($product_data['price'], $product_data['tax_class_id'], $this->config->get('config_tax'))
+						'price'         => $price,
+						'total'         => $this->tax->calculate($price, $product_data['tax_class_id'], $this->config->get('config_tax'))
 					)
 				);
 			}
