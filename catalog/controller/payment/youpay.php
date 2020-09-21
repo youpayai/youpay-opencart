@@ -5,10 +5,10 @@ use YouPaySDK\Order;
 use YouPaySDK\Client;
 use YouPaySDK\Receiver;
 
-class ControllerExtensionPaymentYoupay extends Controller {
+class ControllerPaymentYoupay extends Controller {
 	public function index() {
 
-		return $this->load->view('extension/payment/youpay');
+		return $this->load->view('default/template/payment/youpay.tpl');
 
 	}
 
@@ -19,7 +19,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			$this->load->model('catalog/product');
 			$this->load->model('account/order');
 			$this->load->model('checkout/order');
-			$this->load->model('extension/payment/youpay');
+			$this->load->model('payment/youpay');
 
 
 			require_once 'vendor/autoload.php';
@@ -28,7 +28,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			}
 
 			//check if token and store_id are saved
-			if($this->model_extension_payment_youpay->getToken() && $this->model_extension_payment_youpay->getStoreID()){
+			if($this->model_payment_youpay->getToken() && $this->model_payment_youpay->getStoreID()){
 				$this->client->setToken($this->config->get('youpay_token'));
 				$this->client->setStoreID($this->config->get('youpay_store_id'));
 
@@ -45,8 +45,8 @@ class ControllerExtensionPaymentYoupay extends Controller {
 				$this->client->setToken($access_token);
 				$this->client->setStoreID($store_id);
 				//save token and store id
-				$this->model_extension_payment_youpay->setToken($access_token);
-				$this->model_extension_payment_youpay->setStoreID($store_id);
+				$this->model_payment_youpay->setToken($access_token);
+				$this->model_payment_youpay->setStoreID($store_id);
 
 			}
 
@@ -141,7 +141,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 		$this->load->model('checkout/order');
 		$this->load->model('catalog/product');
 
-		$this->language->load('extension/payment/youpay');
+		$this->language->load('payment/youpay');
 
 		if (empty($this->client)) {
 			$this->client = new Client();
@@ -157,10 +157,10 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			$order_data = $this->model_checkout_order->getOrder($order_id);
 			if($order_data){
 				$payment_status_text = $this->language->get('text_order_complete');
-				// $this->model_checkout_order->update($store_order_id, $this->config->get('youpay_order_status_id'), $payment_status_text, true);
-				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('youpay_order_status_id'), $payment_status_text, true, true);
+				// $this->model_checkout_order->update($store_order_id, $this->config->get('youpay_order_status_id'), $payment_status_text, 'SSL');
+				$this->model_checkout_order->addOrderHistory($order_id, $this->config->get('youpay_order_status_id'), $payment_status_text, true, 'SSL');
 
-				$this->response->redirect($this->url->link('extension/payment/youpay/success', '', true));
+				$this->response->redirect($this->url->link('payment/youpay/success', '', 'SSL'));
 
 			}else{
 				echo "Order not found";
@@ -174,7 +174,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 	}
 
 	public function success(){
-		$this->language->load('extension/payment/youpay');
+		$this->language->load('payment/youpay');
 
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -205,6 +205,6 @@ class ControllerExtensionPaymentYoupay extends Controller {
 		$data['header'] = $this->load->controller('common/header');
 
 
-		$this->response->setOutput($this->load->view('common/success', $data));
+		$this->response->setOutput($this->load->view('default/template/common/success.tpl', $data));
 	}
 }

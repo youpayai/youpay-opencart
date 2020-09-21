@@ -9,7 +9,7 @@
 */
 $host  = $_SERVER['HTTP_HOST'];
 $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-$path  = 'index.php?route=extension/payment/youpay/callback';
+$path  = 'index.php?route=payment/youpay/callback';
 $query = "";
 
 if (isset($_REQUEST) && $_REQUEST) {

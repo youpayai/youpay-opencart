@@ -1,9 +1,9 @@
 <?php
-class ControllerExtensionPaymentYoupay extends Controller {
+class ControllerPaymentYoupay extends Controller {
 	private $error = array();
 
 	public function index() {
-		$this->load->language('extension/payment/youpay');
+		$this->load->language('payment/youpay');
 
 		$this->document->setTitle($this->language->get('heading_title'));
 
@@ -14,7 +14,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->response->redirect($this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=payment', true));
+			$this->response->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'] . '&type=payment', true));
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -73,11 +73,11 @@ class ControllerExtensionPaymentYoupay extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/payment/youpay', 'token=' . $this->session->data['token'], true)
+			'href' => $this->url->link('payment/youpay', 'token=' . $this->session->data['token'], true)
 		);
 
-		$data['action'] = $this->url->link('extension/payment/youpay', 'token=' . $this->session->data['token'], true);
-		$data['reset'] = $this->url->link('extension/payment/youpay/resetToken', 'token=' . $this->session->data['token'], true);
+		$data['action'] = $this->url->link('payment/youpay', 'token=' . $this->session->data['token'], true);
+		$data['reset'] = $this->url->link('payment/youpay/resetToken', 'token=' . $this->session->data['token'], true);
 
 		$data['cancel'] = $this->url->link('marketplace/extension', 'token=' . $this->session->data['token'] . '&type=payment', true);
 
@@ -141,11 +141,11 @@ class ControllerExtensionPaymentYoupay extends Controller {
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
 
-		$this->response->setOutput($this->load->view('extension/payment/youpay', $data));
+		$this->response->setOutput($this->load->view('payment/youpay.tpl', $data));
 	}
 
 	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/payment/youpay')) {
+		if (!$this->user->hasPermission('modify', 'payment/youpay')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
@@ -153,11 +153,11 @@ class ControllerExtensionPaymentYoupay extends Controller {
 	}
 
 	public function resetToken(){
-		$this->load->model('extension/payment/youpay');
-		$this->load->language('extension/payment/youpay');
+		$this->load->model('payment/youpay');
+		$this->load->language('payment/youpay');
 
-		$this->model_extension_payment_youpay->resetToken();
+		$this->model_payment_youpay->resetToken();
 		$this->session->data['success_token'] = $this->language->get('text_success_token');
-		$this->response->redirect($this->url->link('extension/payment/youpay', 'token=' . $this->session->data['token'], true));
+		$this->response->redirect($this->url->link('payment/youpay', 'token=' . $this->session->data['token'], true));
 	}
 }

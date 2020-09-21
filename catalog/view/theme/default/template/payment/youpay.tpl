@@ -7,21 +7,7 @@
 		<h3>You've chosen YouPay as your payment method</h3>
 		
 		<p>When you click the "Confirm &amp; Create YouPay Link" button you'll be given a secure YouPay link to share with your Payer. Simply send that link to the person you want to pay for you and ask them to make the payment. Read more about how YouPay works by <a href="#" data-toggle="modal" data-target="#youPayModal">clicking here</a>.</p>
-		<!-- Modal -->
-	    <div class="modal fade" id="youPayModal" tabindex="-1" role="dialog" aria-labelledby="youPayModalTitle" aria-hidden="true">
-	      <div class="modal-dialog modal-dialog-centered" role="document">
-	        <div class="modal-content">
-	          <div class="modal-header">
-	            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	              <span aria-hidden="true">&times;</span>
-	            </button>
-	          </div>
-	          <div class="modal-body">
-	            <img class="what-is-youpay" alt="What is YouPay?" src="/image/what-is-youpay.jpg">
-	          </div>
-	        </div>
-	      </div>
-	    </div>
+		
 		<input type="button" value="Confirm &amp; Create YouPay Link" id="button-confirm" class="button youpay-link" />
 	</div>
 </div>
@@ -34,7 +20,7 @@
 <script type="text/javascript"><!--
 $('#button-confirm').on('click', function() {
 	$.ajax({
-		url: 'index.php?route=extension/payment/youpay/confirm',
+		url: 'index.php?route=payment/youpay/confirm',
 		dataType: 'json',
 		beforeSend: function() {
 			$('#button-confirm').button('loading');

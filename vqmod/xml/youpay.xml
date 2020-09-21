@@ -94,7 +94,7 @@
         </operation>
     </file>
 
-    <file name="catalog/language/en-gb/mail/order.php">
+    <file name="catalog/language/english/mail/order.php">
         <operation>
             <search position="after" offset="1"><![CDATA[$_['text_new_footer'] ]]></search>
             <add><![CDATA[
