@@ -1,7 +1,7 @@
 === YouPay for OpenCart ===
 Contributors: bmett, claraleigh
-Requires at least: 2.1x
-Tested up to: 1.0
+Requires at least: 2.0.x,2.1.x
+Tested up to: 2.1.0.2
 Requires PHP: 7.0
 Requires vQmod: 2.6.4
 Stable tag: 1.0
