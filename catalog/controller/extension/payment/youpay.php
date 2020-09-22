@@ -67,7 +67,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 						'title'         => $product_data['name'],
 						'quantity'      => (int)$order_product['quantity'],
 						'price'         => $price,
-						'total'         => $this->tax->calculate($price, $product_data['tax_class_id'], $this->config->get('config_tax'))
+						'total'         => $this->tax->calculate($price*(int)$order_product['quantity'], $product_data['tax_class_id'], $this->config->get('config_tax'))
 					)
 				);
 			}
