@@ -21,7 +21,7 @@ Please see youpay.ai for more information.
 2. You need to have at least 1 payment method (PayPal, Stripe, etc) set up within your YouPay account before installing this extension.
 
 # Install Instructions
-1. Make sure you have vQmod install. You can get the newest version of vQmod here: https://github.com/vqmod/vqmod/releases
+1. Make sure you have vQmod installed. You can get the newest version of vQmod here: https://github.com/vqmod/vqmod/releases
 2. Upload the contents of the 'upload' folder to the root directory of your OpenCart installation. No files should be overwritten.
 3. Log into the admin area of your Opencart and navigate to 'Extensions' > 'Extensions' in the menu. 
 4. Select 'Payments' from the extension type drop down. Scroll down until you see 'YouPay' and click on the the green "plus" icon to install the YouPay extension.
