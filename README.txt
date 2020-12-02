@@ -8,7 +8,7 @@ Stable tag: 1.0
 
 == Description ==
 
-This plugin enables the YouPay payment option in your WordPress Woocommerce store.
+This plugin enables the YouPay payment option in your OpenCart store.
 
 YouPay is a new payment option at the checkout, allowing your customers to securely share a payment link with their chosen payer. This empowers your customers to conveniently request items be paid by an external payer.
 
