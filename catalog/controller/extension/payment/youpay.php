@@ -19,7 +19,6 @@ class ControllerExtensionPaymentYoupay extends Controller {
 			$this->load->model('checkout/order');
 			$this->load->model('extension/payment/youpay');
 
-
 			require_once 'vendor/autoload.php';
 			if (empty($this->client)) {
 				$this->client = new Client();
