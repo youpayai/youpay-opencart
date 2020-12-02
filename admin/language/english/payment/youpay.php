@@ -29,6 +29,7 @@ $_['help_fees']      		 = 'Any additional fees to be added to the YouPay order t
 
 // Error
 $_['error_permission']   	 = 'Warning: You do not have permission to modify payment YouPay';
+$_['error_connection']   	 = 'There was an error connecting to the YouPay server. Please check your YouPay login details.';
 
 //Button
 $_['button_reset']			 = "Click here to reset the saved YouPay store ID and token";

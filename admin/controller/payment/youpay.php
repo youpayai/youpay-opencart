@@ -10,11 +10,15 @@ class ControllerPaymentYoupay extends Controller {
 		$this->load->model('setting/setting');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			$this->model_setting_setting->editSetting('youpay', $this->request->post);
+			if($this->checkConnection($this->request->post['youpay_username'], $this->request->post['youpay_password'])){
+				$this->model_setting_setting->editSetting('youpay', $this->request->post);
 
-			$this->session->data['success'] = $this->language->get('text_success');
+				$this->session->data['success'] = $this->language->get('text_success');
 
-			$this->response->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'] . '&type=payment', true));
+				$this->response->redirect($this->url->link('extension/payment', 'token=' . $this->session->data['token'] . '&type=payment', true));
+			}else{
+				$this->error['warning'] = $this->language->get('error_connection');
+			}
 		}
 
 		$data['heading_title'] = $this->language->get('heading_title');
@@ -142,6 +146,45 @@ class ControllerPaymentYoupay extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 
 		$this->response->setOutput($this->load->view('payment/youpay.tpl', $data));
+	}
+
+	public function checkConnection($youpay_email, $youpay_password){
+
+		$this->load->model('payment/youpay');
+
+		require_once '../vendor/autoload.php';
+
+		if (empty($this->client)) {
+			$this->client = new Client();
+		}
+
+		//check if token and store_id are saved
+		if($this->model_extension_payment_youpay->getToken() && $this->model_extension_payment_youpay->getStoreID()){
+			$this->client->setToken($this->config->get('oupay_token'));
+			$this->client->setStoreID($this->config->get('youpay_store_id'));
+		}
+
+		//token and store_id are not saved, authenticate with youpay API
+		//authenticate client
+		// $youpay_email = $this->config->get('payment_youpay_username');
+		// $youpay_password = $this->config->get('payment_youpay_password');
+		$youpay_domain = $_SERVER['SERVER_NAME'];
+
+		$response = $this->client->auth($youpay_email, $youpay_password, $youpay_domain, 'opencart');
+		if($response->status_code!=200){
+			return false;
+		}else{
+
+			$access_token = $response->access_token;
+			$store_id = $response->store_id;
+			$this->client->setToken($access_token);
+			$this->client->setStoreID($store_id);
+			//save token and store id
+			$this->model_extension_payment_youpay->setToken($access_token);
+			$this->model_extension_payment_youpay->setStoreID($store_id);
+
+			return true;
+		}
 	}
 
 	protected function validate() {
