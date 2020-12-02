@@ -10,7 +10,7 @@ class ControllerExtensionPaymentYoupay extends Controller {
 		$this->load->model('setting/setting');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
-			if($this->checkConnection($this->request->post['payment_youpay_username'], $this->request->post['payment_youpay_password'])){
+			if($this->checkConnection($this->request->post['youpay_username'], $this->request->post['youpay_password'])){
 
 				$this->model_setting_setting->editSetting('youpay', $this->request->post);
 
