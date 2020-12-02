@@ -159,7 +159,7 @@ class ControllerPaymentYoupay extends Controller {
 		}
 
 		//check if token and store_id are saved
-		if($this->model_extension_payment_youpay->getToken() && $this->model_extension_payment_youpay->getStoreID()){
+		if($this->model_payment_youpay->getToken() && $this->model_payment_youpay->getStoreID()){
 			$this->client->setToken($this->config->get('oupay_token'));
 			$this->client->setStoreID($this->config->get('youpay_store_id'));
 		}
@@ -180,8 +180,8 @@ class ControllerPaymentYoupay extends Controller {
 			$this->client->setToken($access_token);
 			$this->client->setStoreID($store_id);
 			//save token and store id
-			$this->model_extension_payment_youpay->setToken($access_token);
-			$this->model_extension_payment_youpay->setStoreID($store_id);
+			$this->model_payment_youpay->setToken($access_token);
+			$this->model_payment_youpay->setStoreID($store_id);
 
 			return true;
 		}
